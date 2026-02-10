@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyota | The Wedding Experience</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark-bg: #0f1115;
+            --text-light: #e2e2e2;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Utility Classes */
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
+        
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(15,17,21,1)), 
+                        url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2969&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* --- DEEP GLASS EFFECT --- */
+        .glass-card {
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.01) 100%
+            );
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 
+                0 4px 24px -1px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: linear-gradient(
+                135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.02) 100%
+            );
+            transform: translateY(-5px);
+            box-shadow: 
+                0 20px 40px -5px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Highlight Glass Variant (Gold Tint) */
+        .glass-highlight {
+            background: linear-gradient(
+                135deg, 
+                rgba(212, 175, 55, 0.08) 0%, 
+                rgba(212, 175, 55, 0.02) 100%
+            );
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Ambient Glow Blobs (To make glass visible) */
+        .glow-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .glow-gold { background: radial-gradient(circle, var(--gold), transparent 70%); }
+        .glow-blue { background: radial-gradient(circle, #4a6fa5, transparent 70%); }
+
+        .btn-primary {
+            background-color: var(--gold);
+            color: #000;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+        .btn-primary:hover {
+            background-color: #b5952f;
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(212,175,55,0.4);
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Accordion */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Selection */
+        ::selection {
+            background-color: var(--gold);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-6">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2 text-2xl font-bold tracking-wider text-white" style="font-family: 'Cormorant Garamond', serif;">
+                <i data-lucide="star" class="w-5 h-5 text-gold fill-current text-[#D4AF37]"></i>
+                NYOTA
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#problem" class="text-xs uppercase tracking-widest hover:text-[#D4AF37] transition-colors">Why Nyota</a>
+                <a href="#experience" class="text-xs uppercase tracking-widest hover:text-[#D4AF37] transition-colors">Experience</a>
+                <a href="#process" class="text-xs uppercase tracking-widest hover:text-[#D4AF37] transition-colors">Process</a>
+                <a href="#investment" class="text-xs uppercase tracking-widest hover:text-[#D4AF37] transition-colors">Investment</a>
+                <a href="#contact" class="btn-primary px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest">Book Consultation</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center gap-8 md:hidden backdrop-blur-xl">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="#problem" class="text-2xl font-serif mobile-link">Why Nyota</a>
+            <a href="#experience" class="text-2xl font-serif mobile-link">Experience</a>
+            <a href="#process" class="text-2xl font-serif mobile-link">Process</a>
+            <a href="#investment" class="text-2xl font-serif mobile-link">Investment</a>
+            <a href="#contact" class="text-gold text-2xl font-serif mobile-link">Book Now</a>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <section class="relative h-screen flex items-center justify-center hero-bg px-4 text-center">
+        <div class="max-w-4xl mx-auto z-10 fade-in-up">
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-light mb-6 leading-tight drop-shadow-2xl">
+                Invitations were <br> once printed.
+                <span class="block text-gold mt-2 italic drop-shadow-lg">Now they are experienced.</span>
+            </h1>
+            <p class="text-lg md:text-xl font-light tracking-wide text-gray-200 mb-10 max-w-2xl mx-auto drop-shadow-md">
+                Nyota is a private wedding link designed to host your entire celebration from rituals to memories.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="#experience" class="btn-primary px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest w-full md:w-auto">
+                    See How It Works
+                </a>
+                <button class="btn-outline px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest w-full md:w-auto flex items-center justify-center gap-2">
+                    <i data-lucide="play-circle" class="w-4 h-4"></i> Watch Opening
+                </button>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i data-lucide="chevron-down" class="w-6 h-6 text-gray-400"></i>
+        </div>
+    </section>
+
+    <!-- 2. The Problem (Relief) -->
+    <section id="problem" class="py-24 px-6 md:px-12 bg-[#0f1115] relative overflow-hidden">
+        <!-- Ambient Glow -->
+        <div class="glow-blob glow-blue top-0 left-[-200px]"></div>
+        <div class="glow-blob glow-gold bottom-0 right-[-200px]"></div>
+
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-16 fade-in-up">
+                <p class="text-gold text-xs font-bold uppercase tracking-[0.2em] mb-3">The Reality</p>
+                <h2 class="text-4xl md:text-5xl">You are not just buying a website.<br>You are buying relief.</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                <!-- Traditional -->
+                <div class="glass-card p-8 md:p-12 rounded-2xl fade-in-up relative opacity-70 hover:opacity-100 transition-opacity">
+                    <h3 class="text-2xl mb-6 text-gray-400 font-serif italic">Traditional Wedding</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-gray-400 border-b border-gray-800 pb-2">
+                            <i data-lucide="x" class="w-5 h-5 text-red-900/50"></i> Guests calling to ask for location
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400 border-b border-gray-800 pb-2">
+                            <i data-lucide="x" class="w-5 h-5 text-red-900/50"></i> Wrong dates shared in groups
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400 border-b border-gray-800 pb-2">
+                            <i data-lucide="x" class="w-5 h-5 text-red-900/50"></i> Photos lost in WhatsApp chats
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="x" class="w-5 h-5 text-red-900/50"></i> Expensive cards thrown in bin
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Nyota -->
+                <div class="glass-card glass-highlight p-8 md:p-12 rounded-2xl fade-in-up">
+                    <div class="absolute top-4 right-4 bg-gold text-black text-[10px] font-bold px-3 py-1 uppercase tracking-wider rounded-full">The Solution</div>
+                    <h3 class="text-2xl mb-6 text-white font-serif">Nyota Wedding</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-white border-b border-white/10 pb-2">
+                            <i data-lucide="check" class="w-5 h-5 text-gold"></i> One private link for everything
+                        </li>
+                        <li class="flex items-center gap-3 text-white border-b border-white/10 pb-2">
+                            <i data-lucide="check" class="w-5 h-5 text-gold"></i> All events & maps organized
+                        </li>
+                        <li class="flex items-center gap-3 text-white border-b border-white/10 pb-2">
+                            <i data-lucide="check" class="w-5 h-5 text-gold"></i> Photos preserved in high quality
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <i data-lucide="check" class="w-5 h-5 text-gold"></i> Complete privacy control
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. What Nyota Is (Pillars) -->
+    <section class="py-24 px-6 md:px-12 bg-[#0a0c10] relative">
+         <div class="glow-blob glow-blue bottom-[-100px] left-[50%] transform -translate-x-1/2 opacity-10"></div>
+
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-3xl md:text-4xl font-light mb-6">More than an invitation.</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Nyota is a private wedding platform that manages your invitations, guest communication, events, and memories in one place.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Pillar 1 -->
+                <div class="glass-card p-8 text-center rounded-xl fade-in-up">
+                    <div class="w-14 h-14 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-[#D4AF37]/20">
+                        <i data-lucide="star" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="text-xl mb-3 font-serif">Elegance</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Designed like a cinematic wedding album, not a generic website template.</p>
+                </div>
+                <!-- Pillar 2 -->
+                <div class="glass-card p-8 text-center rounded-xl fade-in-up" style="transition-delay: 100ms;">
+                    <div class="w-14 h-14 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-[#D4AF37]/20">
+                        <i data-lucide="lock" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="text-xl mb-3 font-serif">Control</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">You decide exactly who sees what details. Full administrative power.</p>
+                </div>
+                <!-- Pillar 3 -->
+                <div class="glass-card p-8 text-center rounded-xl fade-in-up" style="transition-delay: 200ms;">
+                    <div class="w-14 h-14 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-[#D4AF37]/20">
+                        <i data-lucide="shield" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="text-xl mb-3 font-serif">Privacy</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Only invited guests can enter. Not searchable on Google. Safe for families.</p>
+                </div>
+                <!-- Pillar 4 -->
+                <div class="glass-card p-8 text-center rounded-xl fade-in-up" style="transition-delay: 300ms;">
+                    <div class="w-14 h-14 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-[#D4AF37]/20">
+                        <i data-lucide="clock" class="w-6 h-6 text-gold"></i>
+                    </div>
+                    <h3 class="text-xl mb-3 font-serif">Legacy</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Your wedding becomes a permanent digital archive, forever accessible.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. The Experience (Guest Journey) -->
+    <section id="experience" class="py-24 px-6 md:px-12 bg-[#0f1115] relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="glow-blob glow-gold top-0 right-[-100px] opacity-20"></div>
+        <div class="glow-blob glow-blue bottom-0 left-[-100px] opacity-10"></div>
+
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-20 fade-in-up">
+                <p class="text-gold text-xs font-bold uppercase tracking-[0.2em] mb-3">The Guest Journey</p>
+                <h2 class="text-4xl md:text-5xl">How it feels.</h2>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Step 1 -->
+                <div class="flex flex-col md:flex-row gap-8 items-center fade-in-up group">
+                    <div class="w-16 h-16 rounded-full bg-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center text-black font-bold text-xl shrink-0 z-10">1</div>
+                    <div class="glass-card p-8 rounded-xl flex-1 w-full relative overflow-hidden">
+                         <div class="absolute top-0 left-0 w-1 h-full bg-gold opacity-50"></div>
+                        <h3 class="text-xl mb-2 text-white font-serif">The Invitation</h3>
+                        <p class="text-gray-400">They receive a personalized WhatsApp link. No apps to download, no confusion.</p>
+                    </div>
+                </div>
+                 <!-- Step 2 -->
+                 <div class="flex flex-col md:flex-row gap-8 items-center fade-in-up group">
+                    <div class="w-16 h-16 rounded-full bg-[#0a0c10] border border-gold/50 flex items-center justify-center text-gold font-bold text-xl shrink-0 z-10">2</div>
+                    <div class="glass-card p-8 rounded-xl flex-1 w-full">
+                        <h3 class="text-xl mb-2 text-white font-serif">The Welcome</h3>
+                        <p class="text-gray-400">They open it to see a full-screen cinematic video or photo of the couple. Their name appears on screen: "Welcome, Sharma Family".</p>
+                    </div>
+                </div>
+                 <!-- Step 3 -->
+                 <div class="flex flex-col md:flex-row gap-8 items-center fade-in-up group">
+                    <div class="w-16 h-16 rounded-full bg-[#0a0c10] border border-gold/50 flex items-center justify-center text-gold font-bold text-xl shrink-0 z-10">3</div>
+                    <div class="glass-card p-8 rounded-xl flex-1 w-full">
+                        <h3 class="text-xl mb-2 text-white font-serif">The Celebration</h3>
+                        <p class="text-gray-400">They see the itinerary, click for Google Maps directions, and read about the rituals.</p>
+                    </div>
+                </div>
+                 <!-- Step 4 -->
+                 <div class="flex flex-col md:flex-row gap-8 items-center fade-in-up group">
+                    <div class="w-16 h-16 rounded-full bg-[#0a0c10] border border-gold/50 flex items-center justify-center text-gold font-bold text-xl shrink-0 z-10">4</div>
+                    <div class="glass-card p-8 rounded-xl flex-1 w-full">
+                        <h3 class="text-xl mb-2 text-white font-serif">The Memories</h3>
+                        <p class="text-gray-400">During the wedding, they upload candid photos directly to your private gallery. After the wedding, the full gallery unlocks for them.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Process -->
+    <section id="process" class="py-24 px-6 md:px-12 bg-[#0a0c10] relative">
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-4xl md:text-5xl mb-4">Simple, stress-free setup.</h2>
+                <p class="text-gray-400">We handle the tech. You enjoy the moment.</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8 max-w-6xl mx-auto">
+                <!-- Step 1 -->
+                <div class="flex-1 min-w-[200px] text-center fade-in-up">
+                    <div class="text-6xl font-serif text-[#D4AF37]/20 mb-4">01</div>
+                    <h4 class="text-lg font-bold mb-2">Consultation</h4>
+                    <p class="text-xs text-gray-500">We learn about your traditions and schedule.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex-1 min-w-[200px] text-center fade-in-up" style="transition-delay: 100ms;">
+                    <div class="text-6xl font-serif text-[#D4AF37]/20 mb-4">02</div>
+                    <h4 class="text-lg font-bold mb-2">Design</h4>
+                    <p class="text-xs text-gray-500">We create your custom theme and monogram.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex-1 min-w-[200px] text-center fade-in-up" style="transition-delay: 200ms;">
+                    <div class="text-6xl font-serif text-[#D4AF37]/20 mb-4">03</div>
+                    <h4 class="text-lg font-bold mb-2">Setup</h4>
+                    <p class="text-xs text-gray-500">We add maps, rituals, and functionality.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="flex-1 min-w-[200px] text-center fade-in-up" style="transition-delay: 300ms;">
+                    <div class="text-6xl font-serif text-[#D4AF37]/40 mb-4">04</div>
+                    <h4 class="text-lg font-bold mb-2 text-gold">Launch</h4>
+                    <p class="text-xs text-gray-400">You share the link with guests.</p>
+                </div>
+                <!-- Step 5 -->
+                <div class="flex-1 min-w-[200px] text-center fade-in-up" style="transition-delay: 400ms;">
+                    <div class="text-6xl font-serif text-[#D4AF37]/20 mb-4">05</div>
+                    <h4 class="text-lg font-bold mb-2">Archive</h4>
+                    <p class="text-xs text-gray-500">It becomes your permanent memory.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Handle vs You Handle -->
+    <section class="py-24 px-6 md:px-12 bg-[#0f1115] relative overflow-hidden">
+        <div class="glow-blob glow-blue top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-15"></div>
+        
+        <div class="container mx-auto max-w-4xl relative z-10">
+            <div class="glass-card rounded-2xl overflow-hidden fade-in-up">
+                <div class="grid md:grid-cols-2">
+                    <div class="p-10 md:p-14 bg-gradient-to-br from-[#D4AF37]/20 to-transparent">
+                        <h3 class="text-2xl font-serif mb-8 text-gold">We Handle</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-gold"></i> Design & Aesthetics</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-gold"></i> Technical Setup</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-gold"></i> Guest Management System</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-gold"></i> Privacy Settings</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-gold"></i> Photo Gallery Management</li>
+                        </ul>
+                    </div>
+                    <div class="p-10 md:p-14 bg-black/40">
+                        <h3 class="text-2xl font-serif mb-8 text-gray-300">You Handle</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3 text-gray-400"><i data-lucide="arrow-right" class="w-4 h-4"></i> Send us photos</li>
+                            <li class="flex items-center gap-3 text-gray-400"><i data-lucide="arrow-right" class="w-4 h-4"></i> Send us the schedule</li>
+                            <li class="flex items-center gap-3 text-gray-400 italic pt-4">That's it.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Privacy Concerns -->
+    <section class="py-24 px-6 md:px-12 bg-[#0a0c10] relative">
+        <div class="container mx-auto max-w-3xl text-center fade-in-up relative z-10">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-b from-[#D4AF37]/20 to-transparent flex items-center justify-center border border-[#D4AF37]/20">
+                <i data-lucide="shield-check" class="w-10 h-10 text-gold"></i>
+            </div>
+            <h2 class="text-3xl md:text-4xl mb-6">Strictly Private. Family Safe.</h2>
+            <p class="text-gray-400 mb-10 leading-relaxed">
+                We understand the sensitivity of family photos and phone numbers. 
+                Nyota is <strong>not</strong> a public website. It is a private vault.
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-gray-300">
+                <div class="p-6 glass-card rounded-xl hover:bg-white/5 transition-colors"><i data-lucide="lock" class="w-6 h-6 mx-auto mb-3 text-gold"></i><br>Password Protected</div>
+                <div class="p-6 glass-card rounded-xl hover:bg-white/5 transition-colors"><i data-lucide="user-x" class="w-6 h-6 mx-auto mb-3 text-gold"></i><br>Invite Only Access</div>
+                <div class="p-6 glass-card rounded-xl hover:bg-white/5 transition-colors"><i data-lucide="eye-off" class="w-6 h-6 mx-auto mb-3 text-gold"></i><br>Hidden from Google</div>
+                <div class="p-6 glass-card rounded-xl hover:bg-white/5 transition-colors"><i data-lucide="image" class="w-6 h-6 mx-auto mb-3 text-gold"></i><br>Controlled Gallery</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Investment -->
+    <section id="investment" class="py-24 px-6 md:px-12 bg-[#0f1115] relative overflow-hidden">
+        <!-- Ambient Glow -->
+        <div class="glow-blob glow-gold top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20 w-[800px] h-[800px]"></div>
+
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-4xl md:text-5xl mb-4">Choose your experience.</h2>
+                <p class="text-gold uppercase tracking-widest text-xs font-bold">One-time Investment. Lifetime Memory.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+                <!-- Digital -->
+                <div class="glass-card p-8 rounded-xl fade-in-up hover:border-gray-500">
+                    <h3 class="text-2xl font-serif mb-2">Digital</h3>
+                    <p class="text-sm text-gray-500 mb-8">Perfect for intimate celebrations.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-400">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Custom Event Link</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Digital Invitation</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Google Maps Integration</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Basic Gallery (100 photos)</li>
+                    </ul>
+                    <button class="w-full py-3 rounded border border-gray-600 hover:bg-white hover:text-black transition-colors text-sm uppercase tracking-wider">Select Digital</button>
+                </div>
+
+                <!-- Royal (Popular) -->
+                <div class="glass-card glass-highlight p-10 rounded-2xl relative transform md:-translate-y-4 fade-in-up z-20" style="transition-delay: 100ms;">
+                    <div class="absolute top-0 right-0 bg-[#D4AF37] text-black text-xs font-bold px-4 py-1.5 uppercase tracking-wider rounded-bl-lg">Most Popular</div>
+                    <h3 class="text-4xl font-serif mb-2 text-gold">Royal</h3>
+                    <p class="text-sm text-gray-300 mb-8">The complete guest experience.</p>
+                    <ul class="space-y-4 mb-10 text-sm text-gray-200">
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37]"></i> Everything in Digital</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37]"></i> <strong>Cinematic Intro Video</strong></li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37]"></i> Guest Photo Uploads</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37]"></i> Rituals & Story Section</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37]"></i> 1 Year Hosting</li>
+                    </ul>
+                    <button class="w-full py-4 rounded bg-[#D4AF37] text-black font-bold hover:bg-[#b5952f] text-sm uppercase tracking-wider transition-colors shadow-lg">Select Royal</button>
+                </div>
+
+                <!-- Imperial -->
+                <div class="glass-card p-8 rounded-xl fade-in-up hover:border-gray-500" style="transition-delay: 200ms;">
+                    <h3 class="text-2xl font-serif mb-2">Imperial</h3>
+                    <p class="text-sm text-gray-500 mb-8">For grand, multi-day legacies.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-400">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Everything in Royal</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Lifetime Archive</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Dedicated Manager</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> RSVP Management System</li>
+                    </ul>
+                    <button class="w-full py-3 rounded border border-gray-600 hover:bg-white hover:text-black transition-colors text-sm uppercase tracking-wider">Select Imperial</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- 10. Final CTA -->
+    <section id="contact" class="py-32 px-6 text-center bg-[#0f1115] relative overflow-hidden">
+        <div class="glow-blob glow-gold top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-10"></div>
+
+        <div class="max-w-2xl mx-auto relative z-10 fade-in-up">
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 leading-tight">
+                Weddings last a few days.<br>
+                <span class="text-gold italic">Memories last a lifetime.</span>
+            </h2>
+            <p class="text-lg text-gray-400 mb-12">Nyota ensures neither are forgotten.</p>
+            <button class="btn-primary px-12 py-5 rounded-full text-base font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(212,175,55,0.3)] hover:shadow-[0_0_60px_rgba(212,175,55,0.5)] transition-all">
+                Book a Consultation
+            </button>
+        </div>
+        
+
+    <!-- 9. FAQ -->
+    <section class="py-24 px-6 md:px-12 bg-[#0a0c10] relative">
+         <div class="glow-blob glow-blue bottom-0 right-0 opacity-10"></div>
+         
+        <div class="container mx-auto max-w-3xl relative z-10">
+            <h2 class="text-3xl md:text-4xl text-center mb-12 fade-in-up">Common Questions</h2>
+            
+            <div class="space-y-4 fade-in-up">
+                <!-- FAQ Item 1 -->
+                <div class="glass-card rounded-lg overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-medium text-lg">Will elderly guests be able to use it?</span>
+                        <i data-lucide="chevron-down" class="accordion-icon w-5 h-5 text-gold"></i>
+                    </button>
+                    <div class="accordion-content bg-black/20">
+                        <div class="px-6 pb-6 text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-4">
+                            Yes. If they can use WhatsApp, they can use Nyota. There are no logins, downloads, or passwords required for guests—just a simple, beautiful link.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div class="glass-card rounded-lg overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-medium text-lg">Do we still need printed cards?</span>
+                        <i data-lucide="chevron-down" class="accordion-icon w-5 h-5 text-gold"></i>
+                    </button>
+                    <div class="accordion-content bg-black/20">
+                        <div class="px-6 pb-6 text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-4">
+                            Many couples send a minimal printed card to close family and use Nyota for the wider circle. However, Nyota is designed to replace printed cards entirely if you wish.
+                        </div>
+                    </div>
+                </div>
+                <!-- FAQ Item 3 -->
+                <div class="glass-card rounded-lg overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-medium text-lg">Can photos be downloaded?</span>
+                        <i data-lucide="chevron-down" class="accordion-icon w-5 h-5 text-gold"></i>
+                    </button>
+                    <div class="accordion-content bg-black/20">
+                        <div class="px-6 pb-6 text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-4">
+                            Yes. You (the couple) have full rights to download all high-resolution photos uploaded by guests.
+                        </div>
+                    </div>
+                </div>
+                 <!-- FAQ Item 4 -->
+                 <div class="glass-card rounded-lg overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-medium text-lg">Can we update details later?</span>
+                        <i data-lucide="chevron-down" class="accordion-icon w-5 h-5 text-gold"></i>
+                    </button>
+                    <div class="accordion-content bg-black/20">
+                        <div class="px-6 pb-6 text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-4">
+                            Absolutely. Unlike printed cards, Nyota allows you to change times, locations, or dates instantly, and everyone seeing the link sees the update immediately.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <footer class="mt-24 pt-8 border-t border-gray-800/50 text-xs text-gray-600 uppercase tracking-widest">
+            &copy; 2026 Nyota All Rights Reserved.
+        </footer>
+    </section>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-black/80', 'backdrop-blur-xl', 'shadow-lg', 'py-4', 'border-b', 'border-white/5');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-black/80', 'backdrop-blur-xl', 'shadow-lg', 'py-4', 'border-b', 'border-white/5');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // Accordion Logic
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const content = button.nextElementSibling;
+            const allItems = document.querySelectorAll('.accordion-item');
+
+            // Close other items
+            allItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+
+            // Toggle current
+            item.classList.toggle('active');
+        }
+
+        // Intersection Observer for Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+    </script>
+</body>
+</html>
