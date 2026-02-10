@@ -23,11 +23,14 @@
             --text-light: #e2e2e2;
         }
 
-        body {
+        /* Enforce global overflow hidden to prevent horizontal scrolling/bleeding */
+        html, body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-light);
             overflow-x: hidden;
+            width: 100%;
+            position: relative;
             scroll-behavior: smooth;
         }
 
@@ -157,22 +160,6 @@
             width: 100%;
         }
 
-        /* Mobile Menu Transitions */
-        .mobile-menu-enter {
-            transform: translateX(100%);
-        }
-        .mobile-menu-enter-active {
-            transform: translateX(0);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .mobile-menu-exit {
-            transform: translateX(0);
-        }
-        .mobile-menu-exit-active {
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
         /* Animations */
         .fade-in-up {
             opacity: 0;
@@ -234,10 +221,7 @@
 
             <!-- Mobile & Tablet Controls (Visible below XL screens) -->
             <div class="xl:hidden flex items-center gap-3 z-[101]">
-                <!-- Mini CTA for Mobile Header - Solid Gold for Visibility -->
-                <a href="#contact" class="bg-[#D4AF37] text-black border border-[#D4AF37] px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-[#b5952f] transition-colors">
-                    BOOK
-                </a>
+                <!-- BUTTON REMOVED as requested -->
                 <button id="mobile-menu-btn" class="text-white p-2 focus:outline-none hover:text-[#D4AF37] transition-colors drop-shadow-md">
                     <!-- Inline SVG for guaranteed visibility without script loading -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -248,33 +232,34 @@
                 </button>
             </div>
         </div>
-
-        <!-- Mobile Menu Overlay (Glass Drawer) -->
-        <div id="mobile-menu" class="fixed inset-0 bg-[#0f1115]/95 backdrop-blur-xl z-[90] transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center h-screen w-screen">
-            <!-- Background Decoration -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full filter blur-[100px] opacity-10 pointer-events-none"></div>
-            
-            <button id="close-menu-btn" class="absolute top-6 right-6 text-white hover:text-[#D4AF37] transition-colors p-2 z-[102]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 6 6 18"/>
-                    <path d="m6 6 12 12"/>
-                </svg>
-            </button>
-
-            <div class="flex flex-col items-center gap-8 w-full px-8 relative z-[91]">
-                <a href="#problem" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Why Nyota</a>
-                <a href="#experience" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Experience</a>
-                <a href="#process" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Process</a>
-                <a href="#investment" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Investment</a>
-                
-                <div class="w-16 h-px bg-white/10 my-4"></div>
-
-                <a href="#contact" class="mobile-link bg-[#D4AF37] text-black px-10 py-4 rounded-full text-sm font-bold uppercase tracking-widest shadow-[0_0_30px_rgba(212,175,55,0.3)] w-full text-center max-w-xs">
-                    BOOK CONSULTATION
-                </a>
-            </div>
-        </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <!-- Used 'hidden' by default to ensure no visual artifacts (ghost button) when closed -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0f1115]/95 backdrop-blur-xl z-[900] transform translate-x-full opacity-0 hidden transition-all duration-500 flex flex-col justify-center items-center h-screen w-screen">
+        <!-- Background Decoration -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full filter blur-[100px] opacity-10 pointer-events-none"></div>
+        
+        <button id="close-menu-btn" class="absolute top-6 right-6 text-white hover:text-[#D4AF37] transition-colors p-2 z-[902]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/>
+                <path d="m6 6 12 12"/>
+            </svg>
+        </button>
+
+        <div class="flex flex-col items-center gap-8 w-full px-8 relative z-[901]">
+            <a href="#problem" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Why Nyota</a>
+            <a href="#experience" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Experience</a>
+            <a href="#process" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Process</a>
+            <a href="#investment" class="mobile-link text-3xl font-serif text-white hover:text-[#D4AF37] transition-colors">Investment</a>
+            
+            <div class="w-16 h-px bg-white/10 my-4"></div>
+
+            <a href="#contact" class="mobile-link bg-[#D4AF37] text-black px-10 py-4 rounded-full text-sm font-bold uppercase tracking-widest shadow-[0_0_30px_rgba(212,175,55,0.3)] w-full text-center max-w-xs">
+                BOOK CONSULTATION
+            </a>
+        </div>
+    </div>
 
     <!-- 1. Hero Section -->
     <section class="relative h-screen flex items-center justify-center hero-bg px-4 text-center">
@@ -698,15 +683,39 @@
             }
         });
 
-        // Mobile Menu Logic
+        // Mobile Menu Logic - UPDATED with hidden class toggling for safety
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileLinks = document.querySelectorAll('.mobile-link');
 
         function toggleMenu() {
-            mobileMenu.classList.toggle('translate-x-full');
-            document.body.classList.toggle('overflow-hidden');
+            // Check if hidden
+            const isHidden = mobileMenu.classList.contains('hidden');
+            
+            if (isHidden) {
+                // OPENING
+                // 1. Make it visible in layout immediately
+                mobileMenu.classList.remove('hidden');
+                // 2. Add slight delay for opacity/transform to animate properly
+                setTimeout(() => {
+                    mobileMenu.classList.remove('translate-x-full', 'opacity-0');
+                }, 10);
+                document.body.classList.add('overflow-hidden');
+            } else {
+                // CLOSING
+                // 1. Start closing animation
+                mobileMenu.classList.add('translate-x-full', 'opacity-0');
+                document.body.classList.remove('overflow-hidden');
+                
+                // 2. Wait for transition to finish before hiding from layout
+                setTimeout(() => {
+                    // Double check if it should still be closed (user didn't reopen quickly)
+                    if (mobileMenu.classList.contains('translate-x-full')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }, 500); // Matches duration-500
+            }
         }
 
         mobileMenuBtn.addEventListener('click', toggleMenu);
